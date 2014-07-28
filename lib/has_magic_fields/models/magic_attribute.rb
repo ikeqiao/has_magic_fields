@@ -1,0 +1,29 @@
+# Always work through the interface MagicAttribute.value
+class MagicAttribute < ActiveRecord::Base
+  belongs_to :magic_field
+  belongs_to :magic_option
+
+  before_save :update_magic
+  
+  def to_s
+    (magic_option) ? magic_option.value : value
+  end
+  
+  def update_magic
+    if option = find_magic_option_for(value)
+      unless magic_option and magic_option == option
+        self.value = nil
+        self.magic_option = option
+      end
+    elsif magic_field.allow_other
+      self.magic_option = nil
+    end
+  end
+  
+private
+
+  def find_magic_option_for(value)
+    magic_field.magic_options.find(:first,
+      :conditions => ["value = ? or synonym = ?", value, value]) unless magic_field.nil? or magic_field.magic_options.blank?
+  end
+end
