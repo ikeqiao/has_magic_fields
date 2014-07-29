@@ -21,6 +21,7 @@ describe HasMagicFields do
 
     it "allows setting and saving of magic attributes" do
       @charlie.magic_fields.create(:name => 'salary')
+      @charlie.name = "zhouzongsi"
       @charlie.salary = 50000
       @charlie.save
       @charlie = Person.find(@charlie.id)
@@ -87,18 +88,17 @@ describe HasMagicFields do
     it "allows adding a magic field to the child" do
       @alice.magic_fields.create(:name => 'salary')
       expect(lambda{@alice.salary}).not_to raise_error
-      expect(lambda{@account.reload_with_magic.salary}).not_to raise_error
+      expect(lambda{@account.salary}).not_to raise_error
     end
 
     it "allows adding a magic field to the parent" do
       @account.magic_fields.create(:name => 'age')
-      expect(lambda{@alice.reload_with_magic.age}).not_to raise_error
+      expect(lambda{@alice.age}).not_to raise_error
     end
 
     it "sets magic fields for all child models" do
       @bob = User.create(name:"bob", account: @account )
       @bob.magic_fields.create(:name => 'birthday')
-      @alice.reload_with_magic
       expect(lambda{@alice.birthday}).not_to raise_error
     end
   end
