@@ -21,18 +21,18 @@ describe HasMagicFields do
 
     it "allows setting and saving of magic attributes" do
       @charlie.magic_fields.create(:name => 'salary')
-      @charlie.name = "zhouzongsi"
       @charlie.salary = 50000
       @charlie.save
       @charlie = Person.find(@charlie.id)
       expect(@charlie.salary).not_to be(nil)
     end
 
-    # it "forces required if is_required is true" do
-    #  # TODO figure out why this fails
-    #  @charlie.magic_fields.create(:name => "last_name", :is_required => true)
-    #  expect(@charlie.save).to be(false)
-    # end
+    it "forces required if is_required is true" do
+     @charlie.magic_fields.create(:name => "last_name", :is_required => true)
+     expect(@charlie.save).to be(false)
+     @charlie.last_name = "zongsi"
+     expect(@charlie.save).to be(true)
+    end
       
     it "allows datatype to be :date" do
       @charlie.magic_fields.create(:name => "birthday", :datatype => :date)

@@ -1,5 +1,6 @@
 module HasMagicFields
   module Extend extend ActiveSupport::Concern
+    include ActiveModel::Validations
     module ClassMethods
       def has_magic_fields(options = {})
         # Associations
@@ -33,10 +34,8 @@ module HasMagicFields
       def method_missing(method_id, *args)
         super(method_id, *args)
       rescue NoMethodError
-        
         method_name = method_id.to_s
-        attr_names = magic_fields.map(&:name)
-        super(method_id, *args) unless attr_names.include?(method_name) or (md = /[\?|\=]/.match(method_name) and attr_names.include?(md.pre_match))
+        super(method_id, *args) unless magic_field_names.include?(method_name) or (md = /[\?|\=]/.match(method_name) and magic_field_names.include?(md.pre_match))
 
         if method_name =~ /=$/
           var_name = method_name.gsub('=', '')
@@ -45,6 +44,20 @@ module HasMagicFields
         else
           read_magic_attribute(method_name)
         end
+      end
+
+      def magic_field_names
+        magic_fields.map(&:name)
+      end
+
+      def valid?(context = nil)
+        output = super(context)
+        magic_fields.each do |field| 
+          if field.is_required?
+            validates_presence_of(field.name) 
+          end
+        end
+        errors.empty? && output
       end
 
       # Load the MagicAttribute(s) associated with attr_name and cast them to proper type.
@@ -57,8 +70,8 @@ module HasMagicFields
 
       def write_magic_attribute(field_name, value)
         field = find_magic_field_by_name(field_name)
-        existing = find_magic_attribute_by_field(field) 
-        (attr = existing.first) ? update_magic_attribute(attr, value) : create_magic_attribute(field, value)
+        attribute = find_magic_attribute_by_field(field) 
+        (attr = attribute.first) ? update_magic_attribute(attr, value) : create_magic_attribute(field, value)
       end
       
       def find_magic_attribute_by_field(field)
