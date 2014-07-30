@@ -1,5 +1,5 @@
 class MagicField < ActiveRecord::Base
-  has_many :magic_field_relationships
+  has_many :magic_field_relationships, :dependent => :destroy
   has_many :owners, :through => :magic_field_relationships, :as => :owner
   has_many :magic_attributes, :dependent => :destroy
   
@@ -29,5 +29,7 @@ class MagicField < ActiveRecord::Base
   def pretty_name
     super || name.humanize
   end
+
+
   
 end
