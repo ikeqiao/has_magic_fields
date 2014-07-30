@@ -19,22 +19,22 @@ describe HasMagicFields do
     end
 
     it "allows adding a magic field" do
-      @charlie.magic_fields.create(:name => 'salary')
-      expect(@charlie.magic_fields.length).to be(1)
+      @charlie.create_magic_filed(:name => 'salary')
+      expect(@charlie.magic_fields.length).to eq(1)
     end
 
     it "validates_uniqueness_of name in a object" do
-      @charlie.magic_fields.create(:name => 'salary')
+      @charlie.create_magic_filed(:name => 'salary')
       before_fields_count = MagicField.count
-      expect(@charlie.magic_fields.length).to be(1)
-      expect(lambda{@charlie.magic_fields.create(:name => 'salary')}).to raise_error
-      expect(@charlie.magic_fields.length).to be(1)
+      expect(@charlie.magic_fields.length).to eq(1)
+      expect(lambda{@charlie.create_magic_filed(:name => 'salary')}).to raise_error
+      expect(@charlie.magic_fields.length).to eq(1)
       after_fields_count = MagicField.count
       expect(before_fields_count).to eq(after_fields_count)
     end
 
     it "allows setting and saving of magic attributes" do
-      @charlie.magic_fields.create(:name => 'salary')
+      @charlie.create_magic_filed(:name => 'salary')
       @charlie.salary = 50000
       @charlie.save
       @charlie = Person.find(@charlie.id)
@@ -42,43 +42,43 @@ describe HasMagicFields do
     end
 
     it "forces required if is_required is true" do
-     @charlie.magic_fields.create(:name => "last_name", :is_required => true)
+     @charlie.create_magic_filed(:name => "last_name", :is_required => true)
      expect(@charlie.save).to be(false)
      @charlie.last_name = "zongsi"
      expect(@charlie.save).to be(true)
     end
       
     it "allows datatype to be :date" do
-      @charlie.magic_fields.create(:name => "birthday", :datatype => :date)
+      @charlie.create_magic_filed(:name => "birthday", :datatype => :date)
       @charlie.birthday = Date.today
       expect(@charlie.save).to be(true)
     end
 
     it "allows datatype to be :datetime" do
-      @charlie.magic_fields.create(:name => "signed_up_at", :datatype => :datetime)
+      @charlie.create_magic_filed(:name => "signed_up_at", :datatype => :datetime)
       @charlie.signed_up_at = DateTime.now
       expect(@charlie.save).to be(true)
     end
 
     it "allows datatype to be :integer" do
-      @charlie.magic_fields.create(:name => "age", :datatype => :integer)
+      @charlie.create_magic_filed(:name => "age", :datatype => :integer)
       @charlie.age = 5
       expect(@charlie.save).to be(true)
     end
 
     it "allows datatype to be :check_box_boolean" do
-      @charlie.magic_fields.create(:name => "retired", :datatype => :check_box_boolean)
+      @charlie.create_magic_filed(:name => "retired", :datatype => :check_box_boolean)
       @charlie.retired = false
       expect(@charlie.save).to be(true)
     end
 
     it "allows default to be set" do
-      @charlie.magic_fields.create(:name => "bonus", :default => "40000")
+      @charlie.create_magic_filed(:name => "bonus", :default => "40000")
       expect(@charlie.bonus).to eq("40000")
     end
 
     it "allows a pretty display name to be set" do
-      @charlie.magic_fields.create(:name => "zip", :pretty_name => "Zip Code")
+      @charlie.create_magic_filed(:name => "zip", :pretty_name => "Zip Code")
       expect(@charlie.magic_fields.last.pretty_name).to eq("Zip Code")
     end
   end
@@ -107,19 +107,21 @@ describe HasMagicFields do
     end
 
     it "allows adding a magic field to the child" do
-      @alice.magic_fields.create(:name => 'salary')
+      @alice.create_magic_filed(:name => 'salary')
+      expect(@alice.magic_fields.length).to eq(1)
       expect(lambda{@alice.salary}).not_to raise_error
+
       expect(lambda{@account.salary}).not_to raise_error
     end
 
     it "allows adding a magic field to the parent" do
-      @account.magic_fields.create(:name => 'age')
+      @account.create_magic_filed(:name => 'age')
       expect(lambda{@alice.age}).not_to raise_error
     end
 
     it "sets magic fields for all child models" do
       @bob = User.create(name:"bob", account: @account )
-      @bob.magic_fields.create(:name => 'birthday')
+      @bob.create_magic_filed(:name => 'birthday')
       expect(lambda{@alice.birthday}).not_to raise_error
       @bob.birthday = "2014-07-29"
       expect(@bob.save).to be(true)
@@ -132,22 +134,18 @@ describe HasMagicFields do
 
 
     it "validates_uniqueness_of name in all models object" do
-      @alice.magic_fields.create(:name => 'salary')
+      @alice.create_magic_filed(:name => 'salary')
       before_fields_count = MagicField.count
-      expect(@alice.magic_fields.length).to be(1)
-      expect(lambda{@alice.magic_fields.create(:name => 'salary')}).to raise_error
-      expect(@alice.magic_fields.length).to be(1)
-      expect(before_fields_count).to eq(MagicField.count)
-      
-      expect(lambda{@account.magic_fields.create(:name => 'salary')}).to raise_error
+      expect(@alice.magic_fields.length).to eq(1)
+      expect(lambda{@alice.create_magic_filed(:name => 'salary')}).to raise_error
+      expect(@alice.magic_fields.length).to eq(1)
       expect(before_fields_count).to eq(MagicField.count)
       
       @bob = User.create(name:"bob", account: @account )
-      expect(lambda{@bob.magic_fields.create(:name => 'salary')}).to raise_error
-      expect(before_fields_count).to eq(MagicField.count)
-      
-      # expect(lambda{@sample.magic_fields.create(:name => 'salary')}).not_to raise_error
-      # expect(before_fields_count).to eq(MagicField.count - 1)
+      expect(lambda{@bob.create_magic_filed(:name => 'salary')}).to raise_error
+      expect(lambda{@sample.create_magic_filed(:name => 'salary')}).not_to raise_error
+      expect(lambda{@account.create_magic_filed(:name => 'salary')}).not_to raise_error
+
     end
   end
 end

@@ -8,6 +8,7 @@ class AddHasMagicFieldsTables < ActiveRecord::Migration
       t.column :is_required,    :boolean, :default => false
       t.column :include_blank,  :boolean, :default => false
       t.column :allow_other,    :boolean, :default => true
+      t.column :type_scoped,   :string
       t.column :created_at,     :datetime
       t.column :updated_at,     :datetime
     end
@@ -25,6 +26,7 @@ class AddHasMagicFieldsTables < ActiveRecord::Migration
       t.column :owner_id, :integer
       t.column :owner_type, :string
       t.column :name, :string
+      t.column :type_scoped,   :string
       t.column :created_at, :datetime
       t.column :updated_at, :datetime
     end
@@ -39,7 +41,7 @@ class AddHasMagicFieldsTables < ActiveRecord::Migration
 
     add_index :magic_attribute_relationships, [:magic_attribute_id, :owner_id, :owner_type], name:"magic_attribute_id_owner", :unique => true
     add_index :magic_field_relationships, [:magic_field_id, :owner_id, :owner_type], name:"magic_field_id_owner", :unique => true
-    add_index :magic_field_relationships, [:name, :owner_id, :owner_type], name:"magic_field_name_owner", :unique => true
+    add_index :magic_field_relationships, [:name, :type_scoped, :owner_id, :owner_type], name:"magic_field_name_owner", :unique => true
   end
 
 end

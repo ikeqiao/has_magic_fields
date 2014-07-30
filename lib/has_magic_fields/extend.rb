@@ -13,6 +13,7 @@ module HasMagicFields
         # Inheritence
         cattr_accessor :inherited_from
 
+
         # if options[:through] is supplied, treat as an inherited relationship
         if self.inherited_from = options[:through]
           class_eval do
@@ -27,12 +28,23 @@ module HasMagicFields
         else
           has_many :magic_field_relationships, :as => :owner, :dependent => :destroy
           has_many :magic_fields, :through => :magic_field_relationships, :dependent => :destroy
+          # alias_method_chain :magic_fields, :scoped
         end
-        
+        alias_method  :magic_fields_without_scoped, :magic_fields
       end
+      
     end
 
     included do
+
+      def create_magic_filed(options = {})
+        type_scoped = options[:type_scoped].blank? ? self.class.name : options[:type_scoped].classify
+        self.magic_fields.create options.merge(type_scoped: type_scoped )
+      end
+
+      def magic_fields_with_scoped
+        magic_fields_without_scoped.where(type_scoped: self.class.name)
+      end
       
       def method_missing(method_id, *args)
         super(method_id, *args)
