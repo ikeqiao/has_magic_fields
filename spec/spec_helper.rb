@@ -1,6 +1,6 @@
 
 require 'debugger'
-
+require 'database_cleaner'
 require 'rubygems'
 require "active_record"
 require 'active_support'
@@ -19,8 +19,10 @@ module Rails
 end
 
 
+
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 # ActiveRecord::Base.configurations = true
+ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 ActiveRecord::Schema.verbose = false
 
@@ -80,6 +82,17 @@ RSpec.configure do |config|
   end
   
   config.after(:all) do
+  end
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 end
 
