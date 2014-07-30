@@ -2,7 +2,6 @@
 require 'debugger'
 
 require 'rubygems'
-require 'rspec/autorun'
 require "active_record"
 require 'active_support'
 require 'sqlite3'
