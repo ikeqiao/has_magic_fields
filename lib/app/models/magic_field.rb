@@ -11,6 +11,7 @@ class MagicField < ActiveRecord::Base
     begin
       case datatype.to_sym
         when :check_box_boolean
+        when :check_box_boolean
           (value.to_int == 1) ? true : false 
         when :date
           Date.parse(value)

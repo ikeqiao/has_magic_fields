@@ -100,6 +100,14 @@ describe HasMagicFields do
       @bob = User.create(name:"bob", account: @account )
       @bob.magic_fields.create(:name => 'birthday')
       expect(lambda{@alice.birthday}).not_to raise_error
+      @bob.birthday = "2014-07-29"
+      expect(@bob.save).to be(true)
+      expect(@account.birthday).to  be(nil)
+      expect(@alice.birthday).to  be(nil)
+      @alice.birthday = "2013-07-29"
+      expect(@alice.save).to be(true)
+      expect(@alice.birthday).not_to eq(@bob.birthday)
     end
+
   end
 end

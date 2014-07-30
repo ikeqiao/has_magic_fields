@@ -1,10 +1,11 @@
+
+require 'debugger'
+
 require 'rubygems'
+require 'rspec/autorun'
 require "active_record"
 require 'active_support'
 require 'sqlite3'
-require 'active_record/fixtures'
-require 'debugger'
-
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'rails'))
@@ -12,7 +13,13 @@ require "init"
 
 require "rails/railtie"
 
-# ActiveRecord::Base.logger = Logger.new(STDOUT)
+module Rails
+  def self.env
+    @_env ||= ActiveSupport::StringInquirer.new(ENV["RAILS_ENV"] || ENV["RACK_ENV"] || "development")
+  end
+end
+
+
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 # ActiveRecord::Base.configurations = true
 
