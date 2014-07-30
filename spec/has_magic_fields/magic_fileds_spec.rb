@@ -8,6 +8,10 @@ describe HasMagicFields do
       @charlie = Person.create(name: "charlie")
     end
 
+    after(:each) do
+      @charlie.destroy!
+    end
+
     it "initializes magic fields correctly" do
       expect(@charlie).not_to be(nil)
       expect(@charlie.class).to be(Person)
@@ -17,6 +21,16 @@ describe HasMagicFields do
     it "allows adding a magic field" do
       @charlie.magic_fields.create(:name => 'salary')
       expect(@charlie.magic_fields.length).to be(1)
+    end
+
+    it "validates_uniqueness_of name in a object" do
+      @charlie.magic_fields.create(:name => 'salary')
+      before_fields_count = MagicField.count
+      expect(@charlie.magic_fields.length).to be(1)
+      expect(lambda{@charlie.magic_fields.create(:name => 'salary')}).to raise_error
+      expect(@charlie.magic_fields.length).to be(1)
+      after_fields_count = MagicField.count
+      expect(before_fields_count).to eq(after_fields_count)
     end
 
     it "allows setting and saving of magic attributes" do
@@ -73,6 +87,13 @@ describe HasMagicFields do
     before(:each) do
       @account = Account.create(name:"important")
       @alice = User.create(name:"alice", account: @account )
+      @sample = Sample.create(name:"TR", account: @account )
+    end
+
+    after(:each) do
+      @sample.destroy!
+      @alice.destroy!
+      @account.destroy!
     end
 
     it "initializes magic fields correctly" do
@@ -109,5 +130,24 @@ describe HasMagicFields do
       expect(@alice.birthday).not_to eq(@bob.birthday)
     end
 
+
+    it "validates_uniqueness_of name in all models object" do
+      @alice.magic_fields.create(:name => 'salary')
+      before_fields_count = MagicField.count
+      expect(@alice.magic_fields.length).to be(1)
+      expect(lambda{@alice.magic_fields.create(:name => 'salary')}).to raise_error
+      expect(@alice.magic_fields.length).to be(1)
+      expect(before_fields_count).to eq(MagicField.count)
+      
+      expect(lambda{@account.magic_fields.create(:name => 'salary')}).to raise_error
+      expect(before_fields_count).to eq(MagicField.count)
+      
+      @bob = User.create(name:"bob", account: @account )
+      expect(lambda{@bob.magic_fields.create(:name => 'salary')}).to raise_error
+      expect(before_fields_count).to eq(MagicField.count)
+      
+      # expect(lambda{@sample.magic_fields.create(:name => 'salary')}).not_to raise_error
+      # expect(before_fields_count).to eq(MagicField.count - 1)
+    end
   end
 end
