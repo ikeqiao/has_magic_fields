@@ -1,5 +1,6 @@
 # HasMagicFields
 [![Gem Version](https://badge.fury.io/rb/has_magic_fields.png)](http://badge.fury.io/rb/has_magic_fields)
+[![CI Status](https://travis-ci.org/ikeqiao/has_magic_fields.svg)](https://travis-ci.org/ikeqiao/has_magic_fields)
 
 Allows the addition of custom "magic" fields and attributes on a per-model
 or per-parent-model basis. This is useful for situations where custom fields are
@@ -140,7 +141,7 @@ end
 
 parent @account also haven't salary magic field
 
-## get all magic fields 
+## Get All Magic Fields 
 ```ruby
 @account.magic_fields #get all meagic_fields both self and children
 @account.magic_fields_with_scoped #get all meagic_fields self

@@ -1,0 +1,10 @@
+language: ruby
+bundler_args: --without development
+
+env:
+  - USE_OFFICIAL_GEM_SOURCE=1
+
+rvm:
+  - 2.0.0
+
+script: RAILS_ENV=test bundle exec rake spec spec
