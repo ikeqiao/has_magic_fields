@@ -41,15 +41,15 @@ Add magic fields to your model:
 
 ```ruby
 @charlie = Person.create(:email => "charlie@example.com")
-@charlie.create_magic_fields(:name => "first_name")
+@charlie.create_magic_field(:name => "first_name")
 ```
 
 Supply additional options if you have more specific requirements for your fields:
 
 ```ruby
-@charlie.create_magic_fields(:name => "last_name", :is_required => true)
-@charlie.create_magic_fields(:name => "birthday", :datatype => :date)
-@charlie.create_magic_fields(:name => "salary", :default => "40000", :pretty_name => "Yearly Salary")
+@charlie.create_magic_field(:name => "last_name", :is_required => true)
+@charlie.create_magic_field(:name => "birthday", :datatype => :date)
+@charlie.create_magic_field(:name => "salary", :default => "40000", :pretty_name => "Yearly Salary")
 ```
 
 The `:datatype` option supports: `:check_box_boolean`, `:date`, `:datetime`, `:integer`
@@ -107,14 +107,14 @@ To see all the magic fields available for a type_scoped(User) child from its par
 To add magic fields, go through the parent or child:
 
 ```ruby
-@alice.create_magic_fields(...)
-@account.create_magic_fields(…,:type_scoped => "User")
+@alice.create_magic_field(...)
+@account.create_magic_field(…,:type_scoped => "User")
 ```
 
 All User children for a given parent will have access to the same magic fields:
 
 ```ruby
-@alice.create_magic_fields(:name => "salary")
+@alice.create_magic_field(:name => "salary")
 @alice.salary = "40000"
 
 @bob = User.create(:name => "bob", :account => @account)
