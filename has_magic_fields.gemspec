@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.version       = HasMagicFields::VERSION
   s.authors       = ["ikeqiao"]
   s.email         = ["zhzsi@126.com"]
-  s.description   = %q{TODO: Write a gem description}
-  s.summary       = %q{TODO: Write a gem summary}
-  s.homepage      = ""
+  s.description   = %q{Custom fields forActiveRecord models, suppport Rails 4!}
+  s.summary       = %q{Allow addition of custom 'magic' fields to ActiveRecord models.}
+  s.homepage      = "git@github.com:ikeqiao/has_magic_fields.git"
   s.license       = "MIT"
 
   s.files         = `git ls-files`.split($/)

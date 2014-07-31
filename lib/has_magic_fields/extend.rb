@@ -42,8 +42,9 @@ module HasMagicFields
         self.magic_fields.create options.merge(type_scoped: type_scoped )
       end
 
-      def magic_fields_with_scoped
-        magic_fields_without_scoped.where(type_scoped: self.class.name)
+      def magic_fields_with_scoped(type_scoped = nil)
+        type_scoped = type_scoped.blank? ? self.class.name : type_scoped.classify
+        magic_fields_without_scoped.where(type_scoped: type_scoped)
       end
       
       def method_missing(method_id, *args)
@@ -61,13 +62,13 @@ module HasMagicFields
         end
       end
 
-      def magic_field_names
-        magic_fields.map(&:name)
+      def magic_field_names(type_scoped = nil)
+        magic_fields_with_scoped(type_scoped).map(&:name)
       end
 
       def valid?(context = nil)
         output = super(context)
-        magic_fields.each do |field| 
+        magic_fields_with_scoped.each do |field| 
           if field.is_required?
             validates_presence_of(field.name) 
           end
@@ -94,7 +95,7 @@ module HasMagicFields
       end
       
       def find_magic_field_by_name(attr_name)
-        magic_fields.to_a.find {|column| column.name == attr_name}
+        magic_fields_with_scoped.to_a.find {|column| column.name == attr_name}
       end
       
       def create_magic_attribute(magic_field, value)

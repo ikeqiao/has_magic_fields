@@ -22,7 +22,7 @@ end
 
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 # ActiveRecord::Base.configurations = true
-ActiveRecord::Base.logger = Logger.new(STDOUT)
+# ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 ActiveRecord::Schema.verbose = false
 
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define do
     t.column "name",       :text
   end
 
-  create_table "samples", :force => true do |t|
+  create_table "products", :force => true do |t|
     t.column "name",       :text
     t.column "account_id", :integer
   end
@@ -73,7 +73,7 @@ RSpec.configure do |config|
       has_magic_fields :through => :account
     end 
 
-    class Sample < ActiveRecord::Base
+    class Product < ActiveRecord::Base
       include HasMagicFields::Extend
       belongs_to :account
       has_magic_fields :through => :account

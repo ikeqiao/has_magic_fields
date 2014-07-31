@@ -8,10 +8,6 @@ describe HasMagicFields do
       @charlie = Person.create(name: "charlie")
     end
 
-    after(:each) do
-      @charlie.destroy!
-    end
-
     it "initializes magic fields correctly" do
       expect(@charlie).not_to be(nil)
       expect(@charlie.class).to be(Person)
@@ -87,13 +83,7 @@ describe HasMagicFields do
     before(:each) do
       @account = Account.create(name:"important")
       @alice = User.create(name:"alice", account: @account )
-      @sample = Sample.create(name:"TR", account: @account )
-    end
-
-    after(:each) do
-      @sample.destroy!
-      @alice.destroy!
-      @account.destroy!
+      @product = Product.create(name:"TR", account: @account )
     end
 
     it "initializes magic fields correctly" do
@@ -106,16 +96,15 @@ describe HasMagicFields do
       expect(@alice.magic_fields).not_to be(nil)
     end
 
-    it "allows adding a magic field to the child" do
+    it "allows adding a magic field from the child" do
       @alice.create_magic_filed(:name => 'salary')
       expect(@alice.magic_fields.length).to eq(1)
       expect(lambda{@alice.salary}).not_to raise_error
-
-      expect(lambda{@account.salary}).not_to raise_error
+      expect(lambda{@account.salary}).to raise_error
     end
 
-    it "allows adding a magic field to the parent" do
-      @account.create_magic_filed(:name => 'age')
+    it "allows adding a magic field from the parent" do
+      @account.create_magic_filed(:name => 'age',type_scoped: "User")
       expect(lambda{@alice.age}).not_to raise_error
     end
 
@@ -125,13 +114,17 @@ describe HasMagicFields do
       expect(lambda{@alice.birthday}).not_to raise_error
       @bob.birthday = "2014-07-29"
       expect(@bob.save).to be(true)
-      expect(@account.birthday).to  be(nil)
       expect(@alice.birthday).to  be(nil)
       @alice.birthday = "2013-07-29"
       expect(@alice.save).to be(true)
       expect(@alice.birthday).not_to eq(@bob.birthday)
     end
 
+    it "defferent model has defferent scope" do
+      @alice.create_magic_filed(:name => 'salary')
+      expect(lambda{@alice.salary}).not_to raise_error
+      expect(lambda{@product.salary}).to raise_error
+    end
 
     it "validates_uniqueness_of name in all models object" do
       @alice.create_magic_filed(:name => 'salary')
@@ -140,12 +133,10 @@ describe HasMagicFields do
       expect(lambda{@alice.create_magic_filed(:name => 'salary')}).to raise_error
       expect(@alice.magic_fields.length).to eq(1)
       expect(before_fields_count).to eq(MagicField.count)
-      
       @bob = User.create(name:"bob", account: @account )
       expect(lambda{@bob.create_magic_filed(:name => 'salary')}).to raise_error
-      expect(lambda{@sample.create_magic_filed(:name => 'salary')}).not_to raise_error
+      expect(lambda{@product.create_magic_filed(:name => 'salary')}).not_to raise_error
       expect(lambda{@account.create_magic_filed(:name => 'salary')}).not_to raise_error
-
     end
   end
 end
