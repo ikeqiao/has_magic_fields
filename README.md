@@ -47,9 +47,9 @@ Add magic fields to your model:
 Supply additional options if you have more specific requirements for your fields:
 
 ```ruby
-@charlie.charlie.create_magic_fields(:name => "last_name", :is_required => true)
-@charlie.charlie.create_magic_fields(:name => "birthday", :datatype => :date)
-@charlie.charlie.create_magic_fields(:name => "salary", :default => "40000", :pretty_name => "Yearly Salary")
+@charlie.create_magic_fields(:name => "last_name", :is_required => true)
+@charlie.create_magic_fields(:name => "birthday", :datatype => :date)
+@charlie.create_magic_fields(:name => "salary", :default => "40000", :pretty_name => "Yearly Salary")
 ```
 
 The `:datatype` option supports: `:check_box_boolean`, `:date`, `:datetime`, `:integer`
@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
   has_many :users
   has_magic_fields
 end
-@account = Account.create(:name => "BobCorp")
+@account = Account.create(:name => "BobCorp",:type_scoped => "User")
 ```
 
 And declare the child as having magic fields :through the parent.
@@ -98,24 +98,20 @@ end
 @alice = User.create(:name => "alice", :account => @account)
 ```
 
-To see all the magic fields available for a child from its parent:
+To see all the magic fields available for a type_scoped(User) child from its parent:
 
 ```ruby
 @alice.magic_fields #=> [#<MagicColumn>,...]
-@account.magic_fields #=> [#<MagicColumn>,...]
-@product.magic_fields #=> [#<MagicColumn>,...]
-@alice.account.magic_fields #=> [#<MagicColumn>,...]
-@product.account.magic_fields #=> [#<MagicColumn>,...]
 ```
 
 To add magic fields, go through the parent or child:
 
 ```ruby
-@alice.magic_fields.create(...)
-@account.magic_fields.create(...)
+@alice.create_magic_fields(...)
+@account.create_magic_fields(…,:type_scoped => "User")
 ```
 
-All children for a given parent will have access to the same magic fields:
+All User children for a given parent will have access to the same magic fields:
 
 ```ruby
 @alice.create_magic_fields(:name => "salary")
@@ -127,6 +123,7 @@ All children for a given parent will have access to the same magic fields:
 ```
 
 
+
 ###Different Model Inherited from The Samle Model
 the other modle Inherited from Account
 
@@ -136,10 +133,19 @@ class Product < ActiveRecord::Base
   belongs_to :account
   has_magic_fields :through => :account
 end
+
 @product = Product.create(:name => "car", :account => @account)
 ```
-@product haven't salary magic field.
-@product.salary
+@product haven't salary magic field, @product.salary should raise NoMethodError
+
+parent @account also haven't salary magic field
+
+## get all magic fields 
+```ruby
+@account.magic_fields #get all meagic_fields both self and children
+@account.magic_fields_with_scoped #get all meagic_fields self
+@account.magic_fields_with_scoped("User") #get all meagic_fields User model
+```
 
 ##To Do
 
