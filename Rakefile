@@ -1,7 +1,7 @@
-require 'rake'
-require "rspec"
-require File.expand_path('../spec/spec_helper', __FILE__)
+namespace :test do
+  desc "run rspec spec "
 
-task :default do
-  system 'bundle exec rspec spec'
+  task :default do
+    system 'rspec spec'
+  end
 end
