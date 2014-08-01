@@ -15,6 +15,8 @@ class MagicField < ActiveRecord::Base
   def type_cast(value)
     begin
       case datatype.to_sym
+        when :string
+          value
         when :check_box_boolean
           (value.to_int == 1) ? true : false 
         when :date

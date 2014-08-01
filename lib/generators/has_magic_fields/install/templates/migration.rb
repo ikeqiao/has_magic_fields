@@ -3,12 +3,13 @@ class AddHasMagicFieldsTables < ActiveRecord::Migration
     create_table :magic_fields do |t|
       t.column :name,           :string
       t.column :pretty_name,    :string
+      t.column :pretty_name_cn,    :string
       t.column :datatype,       :string, :default => "string"
       t.column :default,        :string
       t.column :is_required,    :boolean, :default => false
       t.column :include_blank,  :boolean, :default => false
       t.column :allow_other,    :boolean, :default => true
-      t.column :type_scoped,   :string
+      t.column :type_scoped,    :string
       t.column :created_at,     :datetime
       t.column :updated_at,     :datetime
     end
