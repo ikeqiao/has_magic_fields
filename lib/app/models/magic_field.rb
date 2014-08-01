@@ -9,7 +9,7 @@ class MagicField < ActiveRecord::Base
   before_save :set_pretty_name
 
   def self.datatypes
-    ["check_box_boolean", "date", "datetime", "integer"]
+    ["string","check_box_boolean", "date", "datetime", "integer"]
   end
 
   def type_cast(value)
