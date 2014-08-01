@@ -6,6 +6,12 @@ class MagicField < ActiveRecord::Base
   validates_presence_of :name, :datatype
   validates_format_of :name, :with => /\A[a-z][a-z0-9_]+\z/
 
+  before_save :set_pretty_name
+
+  def self.datatypes
+    ["check_box_boolean", "date", "datetime", "integer"]
+  end
+
   def type_cast(value)
     begin
       case datatype.to_sym
@@ -26,10 +32,8 @@ class MagicField < ActiveRecord::Base
   end
   
   # Display a nicer (possibly user-defined) name for the column or use a fancified default.
-  def pretty_name
-    super || name.humanize
+  def set_pretty_name
+    self.pretty_name = name.humanize if  pretty_name.blank?
   end
-
-
   
 end

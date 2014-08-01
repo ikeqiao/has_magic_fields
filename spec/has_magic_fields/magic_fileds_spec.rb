@@ -139,4 +139,12 @@ describe HasMagicFields do
       expect(lambda{@account.create_magic_filed(:name => 'salary')}).not_to raise_error
     end
   end
+
+  context "magic_field class method" do
+    it "datatypes method" do
+      expect(MagicField.datatypes.class).to be(Array)
+      expect(MagicField.datatypes.size).to eq(4)
+      expect(MagicField.datatypes.first).to eq("check_box_boolean")
+    end
+  end
 end
