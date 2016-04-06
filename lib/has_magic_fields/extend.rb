@@ -63,7 +63,7 @@ module HasMagicFields
       end
 
       def magic_field_names(type_scoped = nil)
-        magic_fields_with_scoped(type_scoped).map(&:name)
+        @magic_field_names ||= magic_fields_with_scoped(type_scoped).map(&:name)
       end
 
       def valid?(context = nil)
