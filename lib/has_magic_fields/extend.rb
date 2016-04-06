@@ -37,7 +37,7 @@ module HasMagicFields
 
     included do
 
-      def create_magic_filed(options = {})
+      def create_magic_field(options = {})
         type_scoped = options[:type_scoped].blank? ? self.class.name : options[:type_scoped].classify
         self.magic_fields.create options.merge(type_scoped: type_scoped )
       end
